@@ -91,17 +91,12 @@ npm start
 ### 5. First-Time Setup
 ```bash
 # Create your first user account
-# Option 1: Use the web interface (recommended)
-# - Go to http://localhost:3000
-# - Click "Don't have an account? Sign up"
-# - Create your account
-
-# Option 2: Use the default test accounts
-# - Username: admin, Password: admin123 (Admin access)
-# - Username: user1, Password: summer25 (Regular user)
+# Go to http://localhost:3000
+# Click "Don't have an account? Sign up"
+# Create your account with your desired username and password
 ```
 
-> **⚠️ Important:** Change default passwords in production and create your own admin account!
+> **🎉 You're all set!** Your GroziOne application is ready to use with your personal account.
 
 ## 🔧 Configuration
 
@@ -184,15 +179,6 @@ cp backend/grozione.db backend/grozione_backup_$(date +%Y%m%d).db
 # Check database status
 python -c "from database import db; print(f'Database path: {db.db_path}')"
 ```
-
-## 🔐 Default Users
-
-The application comes with pre-configured test accounts:
-
-| Username | Password | Role | Description |
-|----------|----------|------|-------------|
-| `admin` | `admin123` | Admin | Full system access |
-| `user1` | `summer25` | User | Regular user account |
 
 ## 🛠️ Development
 
