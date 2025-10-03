@@ -44,7 +44,7 @@ GroziOne is a comprehensive grocery management application that helps you track 
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/grozione.git
+git clone https://github.com/rv-airob-masters/grozione.git
 cd grozione
 ```
 
@@ -456,7 +456,7 @@ uvicorn server:app --host 0.0.0.0 --port 8000 --reload
 
 - 📧 **Email**: support@grozione.com
 - 💬 **Discord**: [Join our community](https://discord.gg/grozione)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/grozione/issues)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/rv-airob-masters/grozione/issues)
 - 📖 **Documentation**: [Full Documentation](https://docs.grozione.com)
 
 ## 🙏 Acknowledgments
@@ -472,7 +472,7 @@ uvicorn server:app --host 0.0.0.0 --port 8000 --reload
 <div align="center">
   <p>Made with ❤️ by the GroziOne Team</p>
   <p>
-    <a href="https://github.com/yourusername/grozione">⭐ Star us on GitHub</a> •
+    <a href="https://github.com/rv-airob-masters/grozione">⭐ Star us on GitHub</a> •
     <a href="https://twitter.com/grozione">🐦 Follow on Twitter</a> •
     <a href="https://grozione.com">🌐 Visit Website</a>
   </p>
