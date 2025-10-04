@@ -10,29 +10,108 @@ GroziOne is a comprehensive grocery management application that helps you track 
 
 ### 🏠 **Core Functionality**
 - **Multi-User Support** - Secure user authentication with data isolation
-- **Grocery Item Management** - Add, view, edit, and delete grocery items
-- **Store Comparison** - Compare prices across different stores
+- **Grocery Item Management** - Add, view, **edit**, and delete grocery items with inline editing
+- **Store Comparison** - Compare prices across different stores (shows only items with price differences)
 - **Receipt Scanning** - AI-powered receipt processing using Azure Document Intelligence
 - **Price Tracking** - Monitor price changes over time
-- **Store Analytics** - View spending patterns and store summaries
+- **Store Analytics** - View spending patterns and store summaries with drill-down capabilities
+- **Interactive Store Summary** - Click store names to view, edit, and delete all items from that store
 
 ### 🔐 **Authentication & Security**
-- **JWT-based Authentication** - Secure login system
+- **JWT-based Authentication** - Secure login system with proper error messaging
 - **User Registration** - Self-service account creation
-- **Admin Panel** - Administrative user management
+- **Role-Based Access Control** - Admin and regular user roles
+- **Admin Dashboard** - Comprehensive user management and activity monitoring
 - **Data Isolation** - Each user sees only their own data
+- **Session Management** - Automatic home page navigation on login
+
+### 👨‍💼 **Admin Features**
+- **Admin Dashboard** - Real-time statistics and user activity monitoring
+  - Total users, active users, admin/regular user counts
+  - Activity timeline (last 30 days)
+  - User activity details with item and scan counts
+- **User Management** - Complete CRUD operations for user accounts
+  - Add new users with role selection
+  - Edit existing users (username, password, role)
+  - Delete users with confirmation (prevents self-deletion)
+- **Activity Tracking** - Monitor user engagement and receipt scanning activity
+- **Admin-Specific UI** - Different home screen with additional management tiles
 
 ### 🎨 **User Experience**
-- **Modern UI** - Beautiful, responsive design with Tailwind CSS
-- **Dark/Light Mode** - Adaptive theming
+- **Modern UI** - Beautiful, responsive design with Tailwind CSS and shadcn/ui
+- **Inline Editing** - Edit items directly without modals or popups
+- **Smart Validation** - Form validation with helpful error messages
+- **Toast Notifications** - Clear feedback for all user actions
 - **Mobile Friendly** - Works seamlessly on all devices
 - **Intuitive Navigation** - Easy-to-use tile-based interface
+- **Expandable Cards** - Click to expand and see detailed information
+- **Visual Feedback** - Icons, colors, and animations for better UX
 
 ### 🤖 **AI Integration**
 - **Azure Document Intelligence** - Professional-grade receipt scanning
 - **Smart Item Recognition** - Automatic item name and price extraction
-- **Store Detection** - Intelligent store name recognition
+- **Fuzzy Store Matching** - Intelligent store name recognition
+  - Matches "TESCO SUPERSTORE" → "Tesco"
+  - Matches "tesco extra" → "Tesco"
+  - Handles case-insensitive variations
 - **Confidence Scoring** - Quality assessment of scanned data
+- **Automatic Store Selection** - Auto-populates store dropdown after scanning
+
+## 🆕 Recent Updates
+
+### Version 2.0 - Enhanced User Experience & Admin Features
+
+**🎯 Major Improvements:**
+
+1. **Inline Item Editing** - Edit grocery items directly without popups
+   - Edit from "My Items" page
+   - Edit from "Store Summary" expanded view
+   - All fields editable: name, store, quantity, price
+   - Save/Cancel buttons with visual feedback
+
+2. **Enhanced Store Summary** - Interactive store management
+   - Removed confusing "Average" value
+   - Shows clear "Total Spend" label
+   - Click store names to expand and view all items
+   - Edit and delete items directly from store view
+   - Smooth expand/collapse animations
+
+3. **Improved Receipt Scanning** - Smarter and more user-friendly
+   - Fuzzy store name matching (handles variations like "TESCO SUPERSTORE")
+   - Auto-populates store dropdown after scanning
+   - Add button disabled until store is selected
+   - Clear warning messages for missing information
+   - Receipt scans now properly tracked in database
+
+4. **Better Price Comparison** - More meaningful insights
+   - Only shows items with actual price differences
+   - Hides items with same price across stores
+   - Clearer best deal and most expensive indicators
+
+5. **Enhanced Admin Dashboard** - Comprehensive user management
+   - Real-time user statistics (total, active, admin, regular)
+   - Activity timeline for last 30 days
+   - User activity details with item and scan counts
+   - Scan count now tracks correctly
+   - Add, edit, delete users with full CRUD operations
+
+6. **Improved Authentication** - Better user feedback
+   - Clear error messages for invalid login (red error box)
+   - Always redirects to home page on login
+   - Prevents unauthorized page access
+   - Session management improvements
+
+7. **Database Enhancements** - Automatic migrations
+   - Auto-migration on server startup
+   - Adds missing columns to existing tables
+   - Backward compatible with old databases
+   - Manual migration script available
+
+**📚 Documentation:**
+- `ENHANCEMENTS_ROUND3.md` - Detailed feature documentation
+- `ADMIN_DASHBOARD_FIX.md` - Admin dashboard fix details
+- `SCAN_COUNT_FIX.md` - Receipt scan tracking fix
+- `BUGFIXES_ROUND2.md` - Bug fixes documentation
 
 ## 🚀 Quick Start
 
@@ -89,14 +168,60 @@ npm start
 - **API Documentation**: http://localhost:8000/docs
 
 ### 5. First-Time Setup
+
+**Default Admin Account:**
+- Username: `admin`
+- Password: `admin123`
+
+> ⚠️ **Important:** Change the default admin password after first login!
+
+**Create Regular User Account:**
 ```bash
-# Create your first user account
 # Go to http://localhost:3000
 # Click "Don't have an account? Sign up"
 # Create your account with your desired username and password
 ```
 
 > **🎉 You're all set!** Your GroziOne application is ready to use with your personal account.
+
+## 📸 Feature Showcase
+
+### 🏠 User Dashboard
+- **Tile-based Navigation** - Easy access to all features
+- **Role-based UI** - Different views for admin and regular users
+- **Quick Actions** - Scan receipt, view items, compare prices
+
+### 📝 My Items Page
+- **Inline Editing** - Click edit icon to modify any field
+- **Quick Delete** - Remove items with one click
+- **Visual Feedback** - Toast notifications for all actions
+- **Responsive Design** - Works on mobile and desktop
+
+### 🏪 Store Summary
+- **Expandable Cards** - Click store name to see all items
+- **Total Spend** - Clear financial information per store
+- **Item Management** - Edit and delete items from store view
+- **Recent Items** - Quick preview of latest purchases
+
+### 🧾 Receipt Scanner
+- **Drag & Drop** - Easy file upload
+- **AI Processing** - Automatic item extraction
+- **Smart Matching** - Fuzzy store name recognition
+- **Review & Edit** - Confirm items before adding
+- **Validation** - Ensures all required fields are filled
+
+### 📊 Compare Prices
+- **Smart Filtering** - Only shows items with price differences
+- **Best Deal Highlight** - Green badge for lowest price
+- **Most Expensive** - Red badge for highest price
+- **Savings Calculator** - Shows potential savings
+
+### 👨‍💼 Admin Dashboard
+- **User Statistics** - Total, active, admin, regular user counts
+- **Activity Timeline** - Visual chart of last 30 days
+- **User Details** - Item count, scan count, last activity
+- **User Management** - Full CRUD operations
+- **Role Management** - Assign admin or user roles
 
 ## 🔧 Configuration
 
@@ -152,10 +277,24 @@ The application creates the following tables automatically:
 
 | Table | Description | Key Fields |
 |-------|-------------|------------|
-| **users** | User accounts and authentication | `id`, `username`, `password_hash`, `role` |
-| **grocery_items** | Individual grocery purchases | `id`, `user_id`, `item_name`, `price`, `store_name` |
-| **receipt_scans** | Receipt processing history | `id`, `user_id`, `scan_date`, `status` |
-| **status_checks** | System health monitoring | `id`, `timestamp`, `status` |
+| **users** | User accounts and authentication | `id`, `username`, `password_hash`, `role`, `created_at` |
+| **grocery_items** | Individual grocery purchases | `id`, `user_id`, `item_name`, `price`, `store`, `quantity`, `date` |
+| **receipt_scans** | Receipt processing history | `id`, `user_id`, `filename`, `store_name`, `total_amount`, `items_count`, `created_at` |
+
+### 🔄 Database Migrations
+
+The application includes automatic database migration support:
+
+- **Automatic Migration** - Runs on server startup
+- **Schema Updates** - Adds missing columns to existing tables
+- **Backward Compatible** - Works with both old and new databases
+- **Manual Migration** - Run `python backend/migrate_database.py` if needed
+
+**Migration Features:**
+- ✅ Adds `user_id` column to `receipt_scans` table
+- ✅ Preserves existing data
+- ✅ Logs migration status
+- ✅ Idempotent (safe to run multiple times)
 
 ### 🔒 Data Privacy & Security
 
@@ -209,11 +348,20 @@ grozione/
 #### Grocery Management
 - `GET /api/grocery-items` - List user's items
 - `POST /api/grocery-items` - Add new item
+- `PUT /api/grocery-items/{id}` - **Update existing item** ✨ NEW
 - `DELETE /api/grocery-items/{id}` - Delete item
 
 #### Receipt Processing
 - `POST /api/scan-receipt` - Upload and process receipt
-- `POST /api/confirm-receipt-items` - Confirm scanned items
+- `POST /api/confirm-receipt-items` - Confirm scanned items (creates receipt scan record)
+
+#### Admin Endpoints (Admin Role Required)
+- `GET /api/admin/users` - List all users
+- `POST /api/admin/users` - Create new user
+- `PUT /api/admin/users/{id}` - Update user
+- `DELETE /api/admin/users/{id}` - Delete user
+- `GET /api/admin/dashboard/stats` - Get dashboard statistics
+- `GET /api/admin/dashboard/activity` - Get user activity data
 
 ### Running Tests
 
@@ -271,22 +419,47 @@ docker-compose up --build
 #### Authentication Flow
 - [ ] User registration works
 - [ ] User login/logout works
-- [ ] Admin login works
+- [ ] Admin login works (admin/admin123)
+- [ ] Invalid login shows error message in red
 - [ ] Data isolation between users
 - [ ] JWT token expiration handling
+- [ ] Always redirects to home page on login
 
 #### Grocery Management
 - [ ] Add new grocery items
 - [ ] View grocery items list
+- [ ] **Edit grocery items inline** ✨ NEW
 - [ ] Delete grocery items
-- [ ] Store comparison functionality
+- [ ] Store comparison functionality (only shows items with price differences)
 - [ ] Price tracking over time
 
 #### Receipt Scanning
 - [ ] Upload receipt image
 - [ ] Process with Azure Document Intelligence
+- [ ] Fuzzy store name matching works (e.g., "TESCO SUPERSTORE" → "Tesco")
+- [ ] Store dropdown auto-populates after scan
 - [ ] Review and confirm scanned items
+- [ ] Add button disabled without store selection
 - [ ] Add confirmed items to grocery list
+- [ ] Receipt scan recorded in database
+
+#### Store Summary
+- [ ] View store summaries with total spend
+- [ ] Click store name to expand
+- [ ] View all items from expanded store
+- [ ] Edit items from store summary
+- [ ] Delete items from store summary
+
+#### Admin Features
+- [ ] Admin sees different home screen
+- [ ] Admin Dashboard shows user statistics
+- [ ] Admin Dashboard shows activity timeline
+- [ ] Admin Dashboard shows user activity details
+- [ ] Scan count increments correctly
+- [ ] User Management: Add new users
+- [ ] User Management: Edit existing users
+- [ ] User Management: Delete users (with confirmation)
+- [ ] Cannot delete self as admin
 
 ### Automated Testing
 
@@ -366,6 +539,74 @@ npm cache clean --force
 - Check API key validity
 - Ensure sufficient quota
 - Validate image format (JPEG, PNG, PDF)
+
+**Store Name Not Recognized:**
+- The fuzzy matching handles common variations
+- If store not matched, select manually from dropdown
+- Supported stores: Tesco, Asda, Aldi, Lidl, Best foods, Quality, Freshco, Others
+
+**Add Button Disabled:**
+- Ensure store is selected from dropdown
+- Amber warning will show if store is missing
+- Select store to enable the button
+
+### Admin Dashboard Issues
+
+**Scan Count Showing 0:**
+- Old scans (before fix) won't have records
+- Scan a new receipt to test
+- Check database migration ran successfully
+- Run manual migration: `python backend/migrate_database.py`
+
+**No Data in Dashboard:**
+- Ensure users have added items or scanned receipts
+- Check database has data: `sqlite3 grozione.db "SELECT COUNT(*) FROM users;"`
+- Verify migration completed: Check server logs
+
+**Database Migration Errors:**
+```bash
+# Run manual migration
+cd backend
+python migrate_database.py
+
+# Check migration status in logs
+# Should see: "✅ Migration completed" or "Database schema is up to date"
+```
+
+### Edit Functionality Issues
+
+**Edit Button Not Working:**
+- Ensure you're logged in
+- Check browser console for errors
+- Verify backend is running
+- Check API endpoint: `PUT /api/grocery-items/{id}`
+
+**Changes Not Saving:**
+- Check network tab for API errors
+- Verify all required fields are filled
+- Check backend logs for errors
+- Ensure user owns the item being edited
+
+## 🏪 Supported Stores
+
+GroziOne supports the following stores with intelligent fuzzy matching:
+
+| Store | Variations Recognized |
+|-------|----------------------|
+| **Tesco** | Tesco, TESCO, Tesco Superstore, TESCO EXTRA, tesco extra |
+| **Asda** | Asda, ASDA, Asda Supermarket, ASDA SUPERSTORE |
+| **Aldi** | Aldi, ALDI, Aldi Stores |
+| **Lidl** | Lidl, LIDL, Lidl GB |
+| **Best foods** | Best foods, BEST FOODS, Bestfoods |
+| **Quality** | Quality, QUALITY, Quality Foods |
+| **Freshco** | Freshco, FRESHCO, Fresh Co |
+| **Others** | Any other store not listed above |
+
+**Fuzzy Matching Features:**
+- ✅ Case-insensitive matching
+- ✅ Handles extra words (e.g., "Superstore", "Extra")
+- ✅ Automatic dropdown selection
+- ✅ Manual override available
 
 ## 📈 Performance Optimization
 
@@ -447,11 +688,14 @@ uvicorn server:app --host 0.0.0.0 --port 8000 --reload
 
 ## 🙏 Acknowledgments
 
-- **Azure Document Intelligence** for receipt processing
-- **FastAPI** for the robust backend framework
-- **React** and **Tailwind CSS** for the beautiful frontend
-- **shadcn/ui** for the component library
-- All our contributors and users!
+- **Azure Document Intelligence** for powerful receipt processing capabilities
+- **FastAPI** for the robust and fast backend framework
+- **React** for the dynamic and responsive frontend
+- **Tailwind CSS** for the beautiful utility-first styling
+- **shadcn/ui** for the elegant component library
+- **SQLite** for the reliable embedded database
+- **JWT** for secure authentication
+- All our contributors, testers, and users who provided valuable feedback!
 
 ---
 

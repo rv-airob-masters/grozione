@@ -9,9 +9,11 @@ import StoreSummary from './components/StoreSummary';
 import Compare from './components/Compare';
 import ReceiptScanner from './components/ReceiptScanner';
 import Login from './components/Login';
+import AdminDashboard from './components/AdminDashboard';
+import UserManagement from './components/UserManagement';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { createAPIWithFallback } from './api';
-import { ShoppingCart, Store, Plus, Scale, ArrowLeft, Home, Scan, LogOut, User } from 'lucide-react';
+import { ShoppingCart, Store, Plus, Scale, ArrowLeft, Home, Scan, LogOut, User, Users, BarChart3 } from 'lucide-react';
 import "./App.css";
 
 function GroceryApp() {
@@ -29,9 +31,12 @@ function GroceryApp() {
     setCurrentView(view);
   };
 
-  // Load initial data
+  // Load initial data and reset view when user changes
   useEffect(() => {
-    loadData();
+    if (user) {
+      setCurrentView('home'); // Reset to home page on login
+      loadData();
+    }
   }, [user]);
 
   const loadData = async () => {
@@ -59,6 +64,15 @@ function GroceryApp() {
     }
   };
 
+  const handleUpdateItem = async (id, item) => {
+    try {
+      await apiService.updateGroceryItem(id, item);
+      await loadData(); // Refresh data
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const handleDeleteItem = async (id) => {
     try {
       await apiService.deleteGroceryItem(id);
@@ -68,7 +82,8 @@ function GroceryApp() {
     }
   };
 
-  const tiles = [
+  // Base tiles for all users
+  const baseTiles = [
     {
       id: 'add',
       title: 'Add New Item',
@@ -121,6 +136,33 @@ function GroceryApp() {
     }
   ];
 
+  // Admin-only tiles
+  const adminTiles = [
+    {
+      id: 'admin-dashboard',
+      title: 'Admin Dashboard',
+      description: 'View user statistics and activity timeline',
+      icon: BarChart3,
+      color: 'bg-gradient-to-br from-cyan-100 to-sky-200 dark:from-cyan-900/20 dark:to-sky-900/20',
+      hoverColor: 'hover:from-cyan-200 hover:to-sky-300 dark:hover:from-cyan-900/30 dark:hover:to-sky-900/30',
+      iconColor: 'text-cyan-600 dark:text-cyan-400',
+      count: null
+    },
+    {
+      id: 'user-management',
+      title: 'User Management',
+      description: 'Add, edit, and manage user accounts',
+      icon: Users,
+      color: 'bg-gradient-to-br from-fuchsia-100 to-pink-200 dark:from-fuchsia-900/20 dark:to-pink-900/20',
+      hoverColor: 'hover:from-fuchsia-200 hover:to-pink-300 dark:hover:from-fuchsia-900/30 dark:hover:to-pink-900/30',
+      iconColor: 'text-fuchsia-600 dark:text-fuchsia-400',
+      count: null
+    }
+  ];
+
+  // Combine tiles based on user role
+  const tiles = user?.role === 'admin' ? [...adminTiles, ...baseTiles] : baseTiles;
+
   // Show loading spinner while checking authentication
   if (authLoading) {
     return (
@@ -162,11 +204,15 @@ function GroceryApp() {
       case 'scan':
         return <ReceiptScanner onItemsAdded={handleReceiptItemsAdded} />;
       case 'list':
-        return <GroceryList items={groceryItems} onDelete={handleDeleteItem} />;
+        return <GroceryList items={groceryItems} onUpdate={handleUpdateItem} onDelete={handleDeleteItem} />;
       case 'summary':
-        return <StoreSummary summary={storeSummary} />;
+        return <StoreSummary summary={storeSummary} onUpdate={handleUpdateItem} onDelete={handleDeleteItem} />;
       case 'compare':
         return <Compare items={groceryItems} />;
+      case 'admin-dashboard':
+        return <AdminDashboard />;
+      case 'user-management':
+        return <UserManagement />;
       default:
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -275,10 +321,12 @@ function GroceryApp() {
         {currentView === 'home' ? (
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-slate-800 dark:text-slate-200 mb-4">
-              Welcome to GroziOne
+              {user?.role === 'admin' ? 'Admin Dashboard' : 'Welcome to GroziOne'}
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Your intelligent grocery companion for smart shopping, spending tracking, and finding the best deals.
+              {user?.role === 'admin'
+                ? 'Manage users, monitor activity, and oversee the GroziOne platform.'
+                : 'Your intelligent grocery companion for smart shopping, spending tracking, and finding the best deals.'}
             </p>
           </div>
         ) : (

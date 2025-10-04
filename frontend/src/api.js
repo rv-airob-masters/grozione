@@ -51,6 +51,30 @@ export const api = {
     }
   },
 
+  // Update grocery item
+  updateGroceryItem: async (id, item) => {
+    try {
+      const response = await fetch(`${API}/grocery-items/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
+        body: JSON.stringify(item),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.item;
+    } catch (error) {
+      console.error('Error updating grocery item:', error);
+      throw error;
+    }
+  },
+
   // Delete grocery item
   deleteGroceryItem: async (id) => {
     try {
@@ -60,11 +84,11 @@ export const api = {
           ...getAuthHeaders(),
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -134,6 +158,109 @@ export const api = {
       console.error('Error getting status checks:', error);
       throw error;
     }
+  },
+
+  // Admin endpoints
+  getUsers: async () => {
+    try {
+      const response = await fetch(`${API}/users`, {
+        headers: {
+          ...getAuthHeaders(),
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.users || [];
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw error;
+    }
+  },
+
+  createUser: async (userData) => {
+    try {
+      const response = await fetch(`${API}/admin/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
+  },
+
+  updateUser: async (userId, userData) => {
+    try {
+      const response = await fetch(`${API}/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
+  },
+
+  deleteUser: async (userId) => {
+    try {
+      const response = await fetch(`${API}/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          ...getAuthHeaders(),
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
+  },
+
+  getDashboardStats: async () => {
+    try {
+      const response = await fetch(`${API}/admin/dashboard`, {
+        headers: {
+          ...getAuthHeaders(),
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      throw error;
+    }
   }
 };
 
@@ -157,6 +284,16 @@ export const createAPIWithFallback = () => {
         console.warn('Backend not available, using mock API:', error);
         const { mockAPI } = await import('./mock');
         return await mockAPI.addGroceryItem(item);
+      }
+    },
+
+    updateGroceryItem: async (id, item) => {
+      try {
+        return await api.updateGroceryItem(id, item);
+      } catch (error) {
+        console.warn('Backend not available, using mock API:', error);
+        const { mockAPI } = await import('./mock');
+        return await mockAPI.updateGroceryItem(id, item);
       }
     },
 

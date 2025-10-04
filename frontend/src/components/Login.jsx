@@ -14,6 +14,7 @@ const Login = ({ onLogin }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const { toast } = useToast();
   const { login } = useAuth();
 
@@ -22,15 +23,22 @@ const Login = ({ onLogin }) => {
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Clear error message when user starts typing
+    if (errorMessage) {
+      setErrorMessage('');
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(''); // Clear previous errors
 
     if (!formData.username || !formData.password) {
+      const errorMsg = "Please fill in all fields";
+      setErrorMessage(errorMsg);
       toast({
         title: "Error",
-        description: "Please fill in all fields",
+        description: errorMsg,
         variant: "destructive",
       });
       return;
@@ -50,6 +58,7 @@ const Login = ({ onLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
+        setErrorMessage(''); // Clear any errors
         if (isSignUp) {
           toast({
             title: "Account Created!",
@@ -72,16 +81,21 @@ const Login = ({ onLogin }) => {
           }
         }
       } else {
+        const errorMsg = data.detail || data.message || (isSignUp ? "Failed to create account" : "Invalid username or password");
+        setErrorMessage(errorMsg);
         toast({
           title: isSignUp ? "Sign Up Failed" : "Login Failed",
-          description: data.detail || (isSignUp ? "Failed to create account" : "Invalid credentials"),
+          description: errorMsg,
           variant: "destructive",
         });
       }
     } catch (error) {
+      console.error('Login error:', error);
+      const errorMsg = error.message || "Failed to connect to server. Please try again.";
+      setErrorMessage(errorMsg);
       toast({
         title: "Error",
-        description: "Failed to connect to server. Please try again.",
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {
@@ -111,6 +125,15 @@ const Login = ({ onLogin }) => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Error Message Display */}
+            {errorMessage && (
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-800 dark:text-red-200 font-medium">
+                  {errorMessage}
+                </p>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <div className="relative">

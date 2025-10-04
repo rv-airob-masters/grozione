@@ -39,6 +39,7 @@ const Compare = ({ items }) => {
         storeCount: itemGroup.length
       };
     })
+    .filter(comparison => comparison.savings > 0) // Only show items with actual price differences
     .sort((a, b) => b.savings - a.savings); // Sort by highest savings first
 
   if (comparableItems.length === 0) {

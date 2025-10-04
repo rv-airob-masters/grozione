@@ -181,6 +181,56 @@ async def get_users(current_user: dict = Depends(get_current_admin_user)):
     users = await db.get_users()
     return {"users": users}
 
+@api_router.put("/admin/users/{user_id}")
+async def update_user(
+    user_id: int,
+    user_data: dict,
+    current_user: dict = Depends(get_current_admin_user)
+):
+    """Update user details (admin only)"""
+    username = user_data.get("username")
+    password = user_data.get("password")
+    role = user_data.get("role")
+
+    result = await db.update_user(user_id, username, password, role)
+
+    if not result["success"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=result["message"]
+        )
+
+    return result
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(
+    user_id: int,
+    current_user: dict = Depends(get_current_admin_user)
+):
+    """Delete user (admin only)"""
+    # Prevent admin from deleting themselves
+    if user_id == current_user.get("user_id"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete your own account"
+        )
+
+    result = await db.delete_user(user_id)
+
+    if not result["success"]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=result["message"]
+        )
+
+    return result
+
+@api_router.get("/admin/dashboard")
+async def get_admin_dashboard(current_user: dict = Depends(get_current_admin_user)):
+    """Get admin dashboard statistics"""
+    stats = await db.get_user_activity_stats()
+    return stats
+
 @api_router.get("/me")
 async def get_current_user_info(current_user: dict = Depends(get_current_user)):
     """Get current user information"""
@@ -188,7 +238,10 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user)):
 
 # Receipt scanning endpoints
 @api_router.post("/scan-receipt")
-async def scan_receipt(file: UploadFile = File(...)):
+async def scan_receipt(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
     """
     Process receipt image and extract structured grocery data
     """
@@ -230,7 +283,10 @@ async def scan_receipt(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
 
 @api_router.post("/confirm-receipt-items")
-async def confirm_receipt_items(items_data: dict):
+async def confirm_receipt_items(
+    items_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
     """
     Add confirmed receipt items to the grocery database
     """
@@ -238,12 +294,15 @@ async def confirm_receipt_items(items_data: dict):
         # Extract items and store info from the request
         items = items_data.get('items', [])
         store_name = items_data.get('store_name', 'Unknown Store')
+        user_id = current_user.get("user_id", 1)
 
         if not items:
             raise HTTPException(status_code=400, detail="No items provided")
 
         # Add items to database
         added_items = []
+        total_amount = 0.0
+
         for item in items:
             grocery_item_data = {
                 "itemName": item.get('name', 'Unknown Item'),
@@ -254,13 +313,29 @@ async def confirm_receipt_items(items_data: dict):
             }
 
             # Save to SQLite database
-            saved_item = await db.add_grocery_item(grocery_item_data)
+            saved_item = await db.add_grocery_item(grocery_item_data, user_id)
             added_items.append(saved_item)
+            total_amount += float(item.get('total_price', 0))
+
+        # Save receipt scan record
+        scan_data = {
+            "filename": items_data.get('filename', 'receipt.jpg'),
+            "file_size": items_data.get('file_size', 0),
+            "processing_status": "success",
+            "confidence_score": items_data.get('confidence', 0.9),
+            "store_name": store_name,
+            "total_amount": total_amount,
+            "items_count": len(items),
+            "scan_result": items_data
+        }
+
+        scan_id = await db.save_receipt_scan(scan_data, user_id)
 
         return {
             "success": True,
             "message": f"Added {len(added_items)} items to your grocery list",
-            "added_items": added_items
+            "added_items": added_items,
+            "scan_id": scan_id
         }
 
     except Exception as e:
@@ -284,6 +359,20 @@ async def add_grocery_item(item_data: dict, current_user: dict = Depends(get_cur
         return {"success": True, "item": saved_item}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to add item: {str(e)}")
+
+@api_router.put("/grocery-items/{item_id}")
+async def update_grocery_item(item_id: str, item_data: dict, current_user: dict = Depends(get_current_user)):
+    """Update a grocery item"""
+    try:
+        updated_item = await db.update_grocery_item(item_id, item_data, user_id=current_user["user_id"])
+        if updated_item:
+            return {"success": True, "item": updated_item}
+        else:
+            raise HTTPException(status_code=404, detail="Item not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update item: {str(e)}")
 
 @api_router.delete("/grocery-items/{item_id}")
 async def delete_grocery_item(item_id: str, current_user: dict = Depends(get_current_user)):

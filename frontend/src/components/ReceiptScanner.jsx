@@ -8,6 +8,7 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Camera, Upload, Check, X, AlertCircle, Loader2, Scan } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -19,10 +20,11 @@ const ReceiptScanner = ({ onItemsAdded }) => {
   const [isConfirming, setIsConfirming] = useState(false);
   const fileInputRef = useRef(null);
   const { toast } = useToast();
+  const { getAuthHeaders } = useAuth();
 
   const storeOptions = [
     'Tesco',
-    'Asda', 
+    'Asda',
     'Aldi',
     'Lidl',
     'Best foods',
@@ -30,6 +32,53 @@ const ReceiptScanner = ({ onItemsAdded }) => {
     'Freshco',
     'Others'
   ];
+
+  // Fuzzy match store name to dropdown options
+  const matchStoreName = (extractedStore) => {
+    if (!extractedStore) return null;
+
+    const normalized = extractedStore.toLowerCase().trim();
+
+    // Direct match first
+    for (const option of storeOptions) {
+      if (normalized === option.toLowerCase()) {
+        return option;
+      }
+    }
+
+    // Fuzzy match - check if extracted name contains or is contained by any option
+    for (const option of storeOptions) {
+      const optionLower = option.toLowerCase();
+      // Check if option is in extracted name (e.g., "tesco" in "tesco superstore")
+      if (normalized.includes(optionLower)) {
+        return option;
+      }
+      // Check if extracted name is in option (less common but possible)
+      if (optionLower.includes(normalized)) {
+        return option;
+      }
+    }
+
+    // Check for common variations
+    const storeVariations = {
+      'tesco': ['tesco superstore', 'tesco extra', 'tesco express', 'tesco metro'],
+      'asda': ['asda superstore', 'asda supermarket'],
+      'aldi': ['aldi stores', 'aldi supermarket'],
+      'lidl': ['lidl uk', 'lidl supermarket'],
+    };
+
+    for (const [store, variations] of Object.entries(storeVariations)) {
+      for (const variation of variations) {
+        if (normalized.includes(variation) || variation.includes(normalized)) {
+          // Find the matching option (case-insensitive)
+          const matchedOption = storeOptions.find(opt => opt.toLowerCase() === store);
+          if (matchedOption) return matchedOption;
+        }
+      }
+    }
+
+    return null; // No match found
+  };
 
   const handleFileSelect = (event) => {
     const file = event.target.files?.[0];
@@ -70,6 +119,9 @@ const ReceiptScanner = ({ onItemsAdded }) => {
 
       const response = await fetch(`${API}/scan-receipt`, {
         method: 'POST',
+        headers: {
+          ...getAuthHeaders(),
+        },
         body: formData,
       });
 
@@ -80,16 +132,31 @@ const ReceiptScanner = ({ onItemsAdded }) => {
 
       const result = await response.json();
       setScanResult(result);
-      
-      // If store name is unclear, don't auto-set it
-      if (!result.store_unclear && result.store_info?.name && result.store_info.name !== 'Unknown Store') {
-        setConfirmedStore(result.store_info.name);
-      }
 
-      toast({
-        title: "Receipt Scanned Successfully",
-        description: `Found ${result.items?.length || 0} items with ${Math.round((result.confidence_score || 0) * 100)}% confidence`,
-      });
+      // Auto-set store name with fuzzy matching
+      const extractedStoreName = result.store || result.store_info?.name;
+      if (extractedStoreName && extractedStoreName !== 'Unknown Store') {
+        const matchedStore = matchStoreName(extractedStoreName);
+        if (matchedStore) {
+          setConfirmedStore(matchedStore);
+          toast({
+            title: "Receipt Scanned Successfully",
+            description: `Found ${result.items?.length || 0} items from ${matchedStore}`,
+          });
+        } else {
+          // Store name extracted but no match found
+          toast({
+            title: "Receipt Scanned Successfully",
+            description: `Found ${result.items?.length || 0} items. Please select the store from dropdown.`,
+            variant: "default",
+          });
+        }
+      } else {
+        toast({
+          title: "Receipt Scanned Successfully",
+          description: `Found ${result.items?.length || 0} items. Please select the store.`,
+        });
+      }
     } catch (error) {
       console.error('Receipt scanning error:', error);
       toast({
@@ -115,14 +182,25 @@ const ReceiptScanner = ({ onItemsAdded }) => {
     setIsConfirming(true);
 
     try {
+      // Transform items to match backend expectations
+      const transformedItems = scanResult.items.map(item => ({
+        name: item.itemName || item.name || 'Unknown Item',
+        quantity: item.quantity || '1 pcs',
+        total_price: item.price || item.total_price || 0
+      }));
+
       const response = await fetch(`${API}/confirm-receipt-items`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({
-          items: scanResult.items,
+          items: transformedItems,
           store_name: confirmedStore,
+          filename: scanResult.file_info?.original_filename || 'receipt.jpg',
+          file_size: scanResult.file_info?.file_size || 0,
+          confidence: scanResult.confidence || scanResult.confidence_score || 0.9,
         }),
       });
 
@@ -253,7 +331,7 @@ const ReceiptScanner = ({ onItemsAdded }) => {
                   </span>
                 </div>
                 <Badge variant="secondary">
-                  {Math.round((scanResult.confidence_score || 0) * 100)}% Confidence
+                  {Math.round((scanResult.confidence || scanResult.confidence_score || 0) * 100)}% Confidence
                 </Badge>
               </div>
 
@@ -290,14 +368,14 @@ const ReceiptScanner = ({ onItemsAdded }) => {
                     {scanResult.items.map((item, index) => (
                       <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
                         <div className="flex-1">
-                          <div className="font-medium">{item.name || 'Unknown Item'}</div>
+                          <div className="font-medium">{item.itemName || item.name || 'Unknown Item'}</div>
                           <div className="text-sm text-gray-600">
                             Qty: {item.quantity || '1 kg'}
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-medium">{formatCurrency(item.total_price)}</div>
-                          {item.unit_price && item.unit_price !== item.total_price && (
+                          <div className="font-medium">{formatCurrency(item.price || item.total_price || 0)}</div>
+                          {item.unit_price && item.unit_price !== (item.price || item.total_price) && (
                             <div className="text-sm text-gray-600">
                               {formatCurrency(item.unit_price)} each
                             </div>
@@ -322,33 +400,43 @@ const ReceiptScanner = ({ onItemsAdded }) => {
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleConfirmItems}
-                  disabled={isConfirming || !confirmedStore}
-                  className="flex-1"
-                >
-                  {isConfirming ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Adding Items...
-                    </>
-                  ) : (
-                    <>
-                      <Check className="h-4 w-4 mr-2" />
-                      Add to Grocery List
-                    </>
-                  )}
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={resetScanner}
-                  disabled={isConfirming}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
+              <div className="space-y-2">
+                {!confirmedStore && (
+                  <div className="p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <p className="text-xs text-amber-800 dark:text-amber-200">
+                      Please select a store name to add items to your grocery list
+                    </p>
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleConfirmItems}
+                    disabled={isConfirming || !confirmedStore}
+                    className="flex-1"
+                    title={!confirmedStore ? "Please select a store first" : "Add items to grocery list"}
+                  >
+                    {isConfirming ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Adding Items...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="h-4 w-4 mr-2" />
+                        Add to Grocery List
+                      </>
+                    )}
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    onClick={resetScanner}
+                    disabled={isConfirming}
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Cancel
+                  </Button>
+                </div>
               </div>
 
               {/* Debug Info */}
