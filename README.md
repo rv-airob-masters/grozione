@@ -4,7 +4,6 @@
 
 GroziOne is a comprehensive grocery management application that helps you track purchases, compare prices across stores, and manage your grocery shopping with intelligent receipt scanning powered by Azure Document Intelligence.
 
-![GroziOne Dashboard](https://via.placeholder.com/800x400/4F46E5/FFFFFF?text=GroziOne+Dashboard)
 
 ## ✨ Features
 
