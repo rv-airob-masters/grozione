@@ -1,0 +1,76 @@
+/* Custom animations and styles for grocery tracker */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes gradient-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.App {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Smooth hover effects for cards */
+.grocery-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.grocery-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Custom gradient backgrounds */
+.gradient-rose {
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+}
+
+.gradient-blue {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.gradient-emerald {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.gradient-purple {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom focus styles */
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid #f472b6;
+    outline-offset: 2px;
+}
+
+/* Loading animation */
+@keyframes pulse-soft {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.loading-pulse {
+    animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

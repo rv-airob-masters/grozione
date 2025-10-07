@@ -1,0 +1,406 @@
+# GroziOne - Git Ignore File
+
+# ===========================
+# Database Files (IMPORTANT: Keep private data secure)
+# ===========================
+*.db
+*.sqlite
+*.sqlite3
+backend/grozione.db
+grozione.db
+database.db
+
+# ===========================
+# Environment Files (Contains sensitive keys)
+# ===========================
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+backend/.env
+backend/.env.production
+frontend/.env
+frontend/.env.production
+*.env
+
+# ===========================
+# Python
+# ===========================
+# Virtual Environment
+grozi/
+venv/
+env/
+ENV/
+.venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# ===========================
+# Node.js / React
+# ===========================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+storybook-static
+
+# Temporary folders
+tmp/
+temp/
+
+# ===========================
+# Test Files and Scripts
+# ===========================
+test_*.py
+*_test.py
+debug_*.py
+migrate_*.py
+add_*_data.py
+fix_*.py
+create_test_*.py
+
+# ===========================
+# Batch Files and Scripts
+# ===========================
+*.bat
+*.cmd
+start_*.bat
+run_*.bat
+setup_*.bat
+
+# ===========================
+# IDE and Editor Files
+# ===========================
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# PyCharm
+.idea/
+*.swp
+*.swo
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*~
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===========================
+# Operating System Files
+# ===========================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===========================
+# Logs and Temporary Files
+# ===========================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ===========================
+# Backup Files
+# ===========================
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+
+# ===========================
+# Azure and Cloud Files
+# ===========================
+.azure/
+
+# ===========================
+# Docker
+# ===========================
+.dockerignore
+Dockerfile.dev
+docker-compose.override.yml
+
+# ===========================
+# Certificates and Keys
+# ===========================
+*.pem
+*.key
+*.crt
+*.cert
+
+# ===========================
+# Custom Project Files
+# ===========================
+# Add any project-specific files to ignore here
+uploads/
+receipts/
+user_data/
+backups/
+
+# ===========================
+# Large Media Files
+# ===========================
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
+*.webm
+*.m4v
+*.mpg
+*.mpeg
+*.3gp
+
+# Large image files
+*.psd
+*.ai
+*.sketch
+
+# Large archives
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.iso
+
+# ===========================
+# Documentation and Guides (Keep repo clean)
+# ===========================
+# Troubleshooting and Fix Guides
+TROUBLESHOOTING*.md
+FIX_*.md
+*_FIX.md
+*_ERROR.md
+*_ISSUES.md
+
+# Quick Start and Setup Guides
+QUICK_*.md
+*_QUICK.md
+SETUP_*.md
+*_SETUP.md
+
+# Feature Implementation Summaries
+*_SUMMARY.md
+*_IMPLEMENTATION.md
+*_FEATURE.md
+CHANGES_MADE*.md
+
+# Testing and Deployment Guides
+TEST_*.md
+*_TEST.md
+DEPLOYMENT_*.md
+*_DEPLOYMENT.md
+CODE_CHANGES*.md
+
+# Success and Status Documents
+*_SUCCESS.md
+*_COMPLETE.md
+*_READY.md
+
+# Batch Files and Scripts
+*.bat
+*.cmd
+*.sh
+start_*.bat
+run_*.bat
+setup_*.bat
+fix_*.bat
+
+# Migration and Fix Scripts
+backend/fix_*.py
+backend/migrate_*.py
+test_backend.py
+fix_database.bat
+
+*.mp4
+# Keep only README.md and LICENSE
+# All other documentation goes to /docs folder if needed
