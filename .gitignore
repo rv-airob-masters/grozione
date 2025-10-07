@@ -376,7 +376,9 @@ CHANGES_MADE*.md
 
 # Testing and Deployment Guides
 TEST_*.md
+TESTING_*.md
 *_TEST.md
+*_TESTING.md
 DEPLOYMENT_*.md
 *_DEPLOYMENT.md
 CODE_CHANGES*.md
@@ -401,6 +403,18 @@ backend/migrate_*.py
 test_backend.py
 fix_database.bat
 
-*.mp4
+# Specific documentation files to ignore
+ADMIN_FEATURES.md
+BUGFIXES.md
+BUGFIXES_ROUND2.md
+CONTRIBUTING.md
+ENHANCEMENTS_ROUND3.md
+LOCAL_FILES_REFERENCE.md
+REMOVE_LARGE_FILE_FROM_GIT.md
+TESTING_GUIDE_ROUND2.md
+GITIGNORE_CLEANUP_SUMMARY.md
+EMAIL_AND_PASSWORD_RESET_FEATURE.md
+EMAIL_PASSWORD_RESET_SUCCESS.md
+
 # Keep only README.md and LICENSE
 # All other documentation goes to /docs folder if needed

@@ -285,11 +285,57 @@ python -c "from database import db; print('Database initialized successfully!')"
 
 The application creates the following tables automatically:
 
-| Table | Description | Key Fields |
-|-------|-------------|------------|
-| **users** | User accounts and authentication | `id`, `username`, `password_hash`, `role`, `created_at` |
-| **grocery_items** | Individual grocery purchases | `id`, `user_id`, `item_name`, `price`, `store`, `quantity`, `date` |
-| **receipt_scans** | Receipt processing history | `id`, `user_id`, `filename`, `store_name`, `total_amount`, `items_count`, `created_at` |
+#### **Users Table**
+Stores user account information and authentication data.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | INTEGER | Primary key (auto-increment) |
+| `username` | TEXT | Unique username |
+| `email` | TEXT | User email address (unique, required for signup) |
+| `password_hash` | TEXT | Hashed password (SHA-256) |
+| `role` | TEXT | User role (`admin` or `user`) |
+| `created_at` | TEXT | Account creation timestamp |
+| `last_login` | TEXT | Last login timestamp |
+| `is_active` | INTEGER | Account status (1=active, 0=inactive) |
+
+#### **Grocery Items Table**
+Stores individual grocery purchases.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | INTEGER | Primary key (auto-increment) |
+| `user_id` | INTEGER | Foreign key to users table |
+| `item_name` | TEXT | Name of the grocery item |
+| `price` | REAL | Item price |
+| `store` | TEXT | Store name |
+| `quantity` | INTEGER | Quantity purchased |
+| `date` | TEXT | Purchase date |
+
+#### **Receipt Scans Table**
+Stores receipt processing history.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | INTEGER | Primary key (auto-increment) |
+| `user_id` | INTEGER | Foreign key to users table |
+| `filename` | TEXT | Receipt image filename |
+| `store_name` | TEXT | Detected store name |
+| `total_amount` | REAL | Total receipt amount |
+| `items_count` | INTEGER | Number of items on receipt |
+| `created_at` | TEXT | Scan timestamp |
+
+#### **Password Reset Tokens Table**
+Stores password reset tokens for account recovery.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | INTEGER | Primary key (auto-increment) |
+| `user_id` | INTEGER | Foreign key to users table |
+| `token` | TEXT | Unique reset token (cryptographically secure) |
+| `expires_at` | TEXT | Token expiration timestamp (1 hour) |
+| `used` | INTEGER | Token usage status (0=unused, 1=used) |
+| `created_at` | TEXT | Token creation timestamp |
 
 ### 🔄 Database Migrations
 
